@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userpracapp
+  labels:
+    app: userpracapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userpracapp
+  template:
+    metadata:
+      labels:
+        app: userpracapp
+    spec:
+      containers:
+        - name: userpracapp
+          image: hsenidbhu/userinfo-service:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9096
+          env:
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: mysql-username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: mysql-password
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: usersdb_url
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userpracapp-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 9096
+      targetPort: 9096
+  selector:
+    app: userpracapp
+ 

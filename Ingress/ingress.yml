@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aws-ingress
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: angular-service
+                port:
+                  number: 80
+
+          # - path: /restaurant
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: restaurant-service
+          #       port:
+          #         number: 9090
+          - path: /restaurant
+            pathType: Prefix
+            backend:
+              service:
+                name: restaurant2-service
+                port:
+                  number: 9095
+          # - path: /foodCatalogue
+          #   pathType: Prefix
+          #   backend:
+          #     service:
+          #       name: foodcatalogue-service
+          #       port:
+          #         number: 9092
+          - path: /order
+            pathType: Prefix
+            backend:
+              service:
+                name: orderpracapp-service
+                port:
+                  number: 9097
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: userpracapp-service
+                port:
+                  number: 9096
+          - path: /foodcatalogue
+            pathType: Prefix
+            backend:
+              service:
+                name: foodcatalogueprac-service
+                port:
+                  number: 9093

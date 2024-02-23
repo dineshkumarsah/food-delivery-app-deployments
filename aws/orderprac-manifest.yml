@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderpracapp
+  labels:
+    app: orderpracapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderpracapp
+  template:
+    metadata:
+      labels:
+        app: orderpracapp
+    spec:
+      containers:
+        - name: orderpracapp
+          image: hsenidbhu/order-service:0.0.4
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9097
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-Djdk.tls.client.protocols=TLSv1.2"
+            - name: SPRING_DATA_MONGODB_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap
+                  key: orderdb_url
+            - name: SPRING_DATA_MONGODB_DATABASE
+              value: "orderdb" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderpracapp-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 9097
+      targetPort: 9097
+  selector:
+    app: orderpracapp
+ 
